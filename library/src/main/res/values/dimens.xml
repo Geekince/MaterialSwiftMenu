@@ -1,0 +1,11 @@
+<resources>
+    <dimen name="default_from_radius">40dp</dimen>
+    <dimen name="default_to_radius">80dp</dimen>
+    <dimen name="default_from_width">60dp</dimen>
+    <dimen name="default_from_height">32dp</dimen>
+    <dimen name="default_to_width">80dp</dimen>
+    <dimen name="default_to_height">80dp</dimen>
+    <dimen name="default_elevation">3dp</dimen>
+    <dimen name="fab_margin">12dp</dimen>
+    <dimen name="default_final_radius">68dp</dimen>
+</resources>

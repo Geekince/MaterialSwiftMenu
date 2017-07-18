@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.kince.widget.ProgressButton xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/progressbutton"
+    android:layout_width="65dp"
+    android:layout_height="32dp"
+    android:gravity="center"
+    android:textColor="@android:color/white"
+    android:textSize="12sp"
+    app:bg_drawable="@drawable/bounder"
+    app:from_corner_radius="40dp"
+    app:stroke_color="@color/colorPrimary"
+    app:stroke_width="1dp" />
