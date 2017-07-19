@@ -58,12 +58,6 @@ public class ProgressDrawable extends Drawable {
         //canvas.drawArc(getRect(mStrokeWidth), -90, mSweepAngle, false,mPaint);
     }
 
-    private RectF getRectInMiddle() {
-        int size = getSize();
-        mMiddleRect = new RectF(size/3, size/3, size - size/3, size - size/3);
-        return mMiddleRect;
-    }
-
     @Override
     public void setAlpha(int alpha) {
 
@@ -82,9 +76,9 @@ public class ProgressDrawable extends Drawable {
     private Paint mPaint;
     private Path mPath;
 
-    private RectF getRect(int stoken) {
+    private RectF getRect(int stoke) {
         int size = getSize();
-        int index = stoken / 2;
+        int index = stoke / 2;
         mRectF = new RectF(index, index, size - index, size - index);
         return mRectF;
     }
@@ -102,6 +96,12 @@ public class ProgressDrawable extends Drawable {
             mPaint.setStrokeWidth(stokenWidth);
         }
         return mPaint;
+    }
+
+    private RectF getRectInMiddle() {
+        int size = getSize();
+        mMiddleRect = new RectF(size/3, size/3, size - size/3, size - size/3);
+        return mMiddleRect;
     }
 
 }

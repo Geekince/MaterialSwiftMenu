@@ -20,7 +20,7 @@ import com.kince.widget.util.Utils;
  */
 public class RotateDrawable extends Drawable {
 
-    float sweepDegrees = 360f;
+    private float sweepDegrees = 360f;
 
     private Bitmap mRotateBitmap;
     private int mDrawableSize;

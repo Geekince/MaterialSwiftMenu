@@ -70,6 +70,11 @@ public class MaterialSwiftMenu extends FrameLayout {
     private int arcX, arcY;
     private Paint mCirclePaint;
 
+    private List<Button> mMenuButtons = new ArrayList<>();
+    private int mClickPosition;
+    private ComboClickListener mComboClickListener;
+    private int mTotalClickCount;
+
     public MaterialSwiftMenu(Context context) {
         super(context);
     }
@@ -199,7 +204,9 @@ public class MaterialSwiftMenu extends FrameLayout {
             @Override
             public void progressEnd() {
                 mTotalClickCount = 0;
-                toggleMenu();
+                if (isOpened) {
+                    toggleMenu();
+                }
                 mBubbleView.stop();
                 mComboClickListener.onMenuClosed();
             }
@@ -508,6 +515,65 @@ public class MaterialSwiftMenu extends FrameLayout {
         rotateAnimatorSet.start();
     }
 
+    private void scaleUpSubMenu(final View view) {
+        ObjectAnimator animatorX = ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 1.35f, 1.0f);
+        ObjectAnimator animatorY = ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 1.35f, 1.0f);
+
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(animatorX, animatorY);
+        set.setInterpolator(new DecelerateInterpolator());
+        set.setDuration(250);
+        set.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+            }
+        });
+        set.start();
+    }
+
+    private OnClickListener mMainMenuClickListener = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (mComboClickListener != null && !mComboClickListener.isOpenMenu()) {
+                return;
+            }
+            if (mMainMenuButton.getState() == ProgressButton.STATE.PROGRESS) {
+                mComboClickListener.onComboClick();
+                if (!isOpened) {
+                    toggleMenu();
+                }
+            } else if (mMainMenuButton.getState() == ProgressButton.STATE.NORMAL) {
+                mComboClickListener.onSingleClick();
+            }
+            updateTotalClickCount(1);
+            mMainMenuButton.onButtonClick();
+        }
+    };
+
+    private OnClickListener subMenuClickListener = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (mComboClickListener != null) {
+                scaleUpSubMenu(v);
+                mClickPosition = (int) v.getTag();
+                updateTotalClickCount(getSpinnerGiftNum());
+                mComboClickListener.onMenuClick(getSpinnerGiftNum());
+                mMainMenuButton.scaleTextSize(16);
+                toggleMenu();
+            }
+        }
+
+    };
+
+    private void updateTotalClickCount(int num) {
+        mTotalClickCount += num;
+        String finalText = "x" + String.valueOf(mTotalClickCount);
+        mMainMenuButton.setText(finalText);
+    }
+
     /**
      * Toggles the state of the ArcMenu, i.e. closes it if it is open and opens it if it is closed
      */
@@ -556,48 +622,11 @@ public class MaterialSwiftMenu extends FrameLayout {
         invalidate();
     }
 
-    private OnClickListener mMainMenuClickListener = new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            if (mComboClickListener != null && !mComboClickListener.isOpenMenu()) {
-                return;
-            }
-            if (mMainMenuButton.getState() == ProgressButton.STATE.PROGRESS) {
-                mComboClickListener.onComboClick();
-                if(!isOpened){
-                    toggleMenu();
-                }
-            } else if (mMainMenuButton.getState() == ProgressButton.STATE.NORMAL) {
-                mComboClickListener.onSingleClick();
-            }
-            updateTotalClickCount(1);
-            mMainMenuButton.onButtonClick();
-        }
-    };
-
-    private OnClickListener subMenuClickListener = new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            if (mComboClickListener != null) {
-                scaleUpSubMenu(v);
-                mClickPosition = (int) v.getTag();
-                updateTotalClickCount(getSpinnerGiftNum());
-                mComboClickListener.onMenuClick(getSpinnerGiftNum());
-                mMainMenuButton.scaleTextSize(16);
-                toggleMenu();
-            }
-        }
-
-    };
-
     public int getSpinnerGiftNum() {
         String tx = mMenuButtons.get(mClickPosition).getText().toString();
         if (!TextUtils.isEmpty(tx)) {
             return Integer.parseInt(tx);
         }
-        //礼物默认传1个
         return 1;
     }
 
@@ -614,16 +643,11 @@ public class MaterialSwiftMenu extends FrameLayout {
         button.setLayoutParams(params);
         button.setGravity(Gravity.CENTER);
         button.setTextColor(Color.WHITE);
-        button.setText("12");
+        button.setText("");
         button.setOnClickListener(subMenuClickListener);
         mMenuButtons.add(button);
         return button;
     }
-
-    private List<Button> mMenuButtons = new ArrayList<>();
-    private int mClickPosition;
-    private ComboClickListener mComboClickListener;
-    private int mTotalClickCount;
 
     public void setComboClickListener(ComboClickListener comboClickListener) {
         this.mComboClickListener = comboClickListener;
@@ -658,26 +682,10 @@ public class MaterialSwiftMenu extends FrameLayout {
         }
     }
 
-    private void scaleUpSubMenu(final View view) {
-        ObjectAnimator animatorX = ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 1.35f, 1.0f);
-        ObjectAnimator animatorY = ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 1.35f, 1.0f);
-
-        AnimatorSet set = new AnimatorSet();
-        set.playTogether(animatorX, animatorY);
-        set.setInterpolator(new DecelerateInterpolator());
-        set.setDuration(250);
-        set.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-            }
-        });
-        set.start();
-    }
-
-    private void updateTotalClickCount(int num) {
-        mTotalClickCount += num;
-        mMainMenuButton.setText(String.valueOf(mTotalClickCount));
+    public void resetMenuState(int type) {
+        beginCloseAnimation();
+        mMainMenuButton.setState(ProgressButton.STATE.NORMAL, true);
+        updateCountView(type);
     }
 
 }

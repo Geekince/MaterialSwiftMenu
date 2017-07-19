@@ -191,10 +191,6 @@ public class ProgressButton extends AppCompatButton {
         }
     }
 
-    public void setStatus(int status, boolean anim) {
-        setState(STATE.NORMAL, anim);
-    }
-
     /**
      * order by yourself
      *
@@ -210,7 +206,7 @@ public class ProgressButton extends AppCompatButton {
         return mState;
     }
 
-    private void setState(STATE state, boolean anim) {
+    public void setState(STATE state, boolean anim) {
         if (getWidth() == 0 || morphingCircle || morphingNormal)
             return;
         this.mState = state;
@@ -445,7 +441,7 @@ public class ProgressButton extends AppCompatButton {
                     int value = (int) animation.getAnimatedValue();
                     setProgress(value + 1);
                     if (value == 100) {
-                        setStatus(0, true);
+                        setState(STATE.NORMAL, true);
                     }
                 }
             });
